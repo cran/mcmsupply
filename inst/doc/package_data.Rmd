@@ -1,0 +1,109 @@
+---
+title: "Package data"
+output: 
+  rmarkdown::html_vignette:
+       toc: true
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Package data}
+  %\usepackage[UTF-8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+This vignette covers package data. Central to all vignettes are data inputs in the form of, country classifications, estimated correlations, estimated national and subnational model parameters for one-country runs, and national and subnational family planning source data.
+
+1. [Country and area classification](#div) `Country_and_area_classification_inclFP2020`
+2. [Country names](#div) `country_names`
+3. [Estimated national correlations](#cu) `estimated_national_correlations`
+4. [Estimated subnational correlations](#cu)  `estimated_global_subnational_correlations` and `estimated_global_spatial_subnational_correlations`
+5. [Estimated model parameters for national one-country runs](#pc) `median_alpha_region_intercepts`, `precision_alpha_country_intercepts` , and `Bspline_sigma_matrix_median`, 
+6. [Estimated model parameters for subnational one-country runs](#pc) `median_alphacms`, `tau_alphapms_subnationalmod`, and `inv.sigma_delta_hat_subnationalmod`.
+7. [Family planning source data](#pc) `national_FPsource_data` and `subnat_FPsource_data`
+
+## Load your library
+
+```{r, include=TRUE, message=FALSE}
+library(mcmsupply)
+```
+
+## <a name="div"></a>
+## 1. Country and area classification
+Country and area classification data is used as the a link between low-level divisions (country) and higher-level divisions (sub-regions, regions). After loading the package, enter `Country and area classification` into the console to access this data.
+```{r}
+Country_and_area_classification
+??Country_and_area_classification
+```
+
+
+## 1. Country names
+Country names is to inform users of what countries are available at the national and subnational administrative division in the preloaded data of the mcmsupply package. After loading the package, enter `country_names` into the console to access this data.
+```{r}
+country_names
+??country_names
+```
+
+
+## <a name="cu"></a>
+## 3. Estimated national correlations
+This is the estimated correlations for the rates of change between methods in the global national model. The approach for estimating correlations at the national level is very similar to that at the subnational level. For an example of how to calculate the subnational correlations, please review the `inst/data-raw/estimated_global_subnational_correlations.R` script.
+```{r}
+estimated_national_correlations
+```
+
+
+## <a name="cu"></a>
+## 4. Estimated subnational correlations
+This is the estimated correlations for the rates of change between methods in the global national model. There is a vignette to describe how we calculated these correlations at the subnational level, please review the `inst/data-raw/estimated_global_subnational_correlations.R` script. 
+
+```{r}
+estimated_global_subnational_correlations
+```
+
+
+## <a name="cu"></a>
+## 5. Estimated model parameters for national one-country runs
+These are the estimated parameters used in a one-country national model run. `median_alpha_region_intercepts` are the regional intercepts used to inform the country-specific intercept of the model, the `precision_alpha_country_intercepts` are the associated variance with these country-specific intercepts. `Bspline_sigma_matrix_median` is the variance-covariance matrix used to inform the Wishart prior on the first-order difference of the spline coefficients. 
+
+```{r}
+median_alpha_region_intercepts
+```
+
+```{r}
+precision_alpha_country_intercepts
+```
+
+```{r}
+Bspline_sigma_matrix_median
+```
+
+## <a name="cu"></a>
+## 6. Estimated model parameters for subnational one-country runs
+These are the estimated parameters used in a one-country subnational model run. `median_alphacms` are the country-specific intercepts used to inform the subnational province-specific intercepts of the model, the `tau_alphapms_subnationalmod` are the associated variance with these province-specific intercepts. `inv.sigma_delta_hat_subnationalmod` is a precision of the variance-covariance matrix used to inform the multi-variate normal prior on first-order differences of the spline coefficients for the one-country subnational model. 
+
+```{r}
+median_alphacms
+```
+
+```{r}
+mcmsupply::tau_alphapms_subnationalmod
+```
+
+```{r}
+ mcmsupply::inv.sigma_delta_hat_subnationalmod
+```
+
+
+## <a name="cu"></a>
+## 7. Family planning source data 
+These are are two family planning commodity source datasets provided in this package - one for the national level observations, `national_FPsource_data` and one for the subnational level data `subnat_FPsource_data`. For the national level data, there is a vignette `calculate_FPsource_national_data_from_DHSmicrodata` in the `inst/data-raw` folder that explains how the national level data was calculated using the DHS micro-data. A similar approach was used for the subnational data using IPUMS data.
+
+```{r}
+national_FPsource_data
+```
+
+
+```{r}
+subnat_FPsource_data
+```

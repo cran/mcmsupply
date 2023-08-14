@@ -5,6 +5,13 @@ knitr::opts_chunk$set(echo = TRUE)
 library(mcmsupply)
 
 ## -----------------------------------------------------------------------------
+head(national_FPsource_data)
+
+## -----------------------------------------------------------------------------
+head(subnat_FPsource_data)
+
+
+## -----------------------------------------------------------------------------
 Country_and_area_classification
 ??Country_and_area_classification
 
@@ -13,32 +20,26 @@ country_names
 ??country_names
 
 ## -----------------------------------------------------------------------------
-estimated_national_correlations
+national_estimated_correlations_logitnormal
 
 ## -----------------------------------------------------------------------------
-estimated_global_subnational_correlations
+subnational_estimated_correlations
 
 ## -----------------------------------------------------------------------------
-median_alpha_region_intercepts
+national_theta_rms_hat_logitnormal
 
 ## -----------------------------------------------------------------------------
-precision_alpha_country_intercepts
+national_tau_alpha_cms_hat_logitnormal
 
 ## -----------------------------------------------------------------------------
-Bspline_sigma_matrix_median
+national_sigma_delta_hat_logitnormal
 
 ## -----------------------------------------------------------------------------
-median_alphacms
+subnational_alpha_cms_hat
 
 ## -----------------------------------------------------------------------------
-mcmsupply::tau_alphapms_subnationalmod
+subnational_tau_alpha_pms_hat
 
 ## -----------------------------------------------------------------------------
- mcmsupply::inv.sigma_delta_hat_subnationalmod
-
-## -----------------------------------------------------------------------------
-national_FPsource_data
-
-## -----------------------------------------------------------------------------
-subnat_FPsource_data
+subnational_inv.sigma_delta_hat
 

@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
-#                        n_iter = 20000, n_burnin = 2000, n_thin = 9)
+#                        n_iter = 50000, n_burnin = 10000, n_thin = 20)
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)

@@ -2,7 +2,7 @@ Package: mcmsupply
 Type: Package
 Title: Estimating Public and Private Sector Contraceptive Market Supply
         Shares
-Version: 0.1.1
+Version: 0.2.2
 Authors@R: 
     c(person("Hannah", "Comiskey", email="hannah.comiskey.2015@mumail.ie", 
     role = c("aut", "cre")),
@@ -23,10 +23,10 @@ Imports: R2jags, magrittr, foreach, tidyverse, tidybayes, runjags,
 URL: https://hannahcomiskey.github.io/mcmsupply/,
         https://hannahcomiskey.github.io/mcmsupply/
 NeedsCompilation: no
-Packaged: 2023-07-10 17:03:03 UTC; hannahcomiskey
+Packaged: 2023-08-14 17:22:31 UTC; hannahcomiskey
 Author: Hannah Comiskey [aut, cre],
   Niamh Cahill [aut],
   Leontine Alkema [aut]
 Maintainer: Hannah Comiskey <hannah.comiskey.2015@mumail.ie>
 Repository: CRAN
-Date/Publication: 2023-07-11 15:40:02 UTC
+Date/Publication: 2023-08-14 17:40:02 UTC

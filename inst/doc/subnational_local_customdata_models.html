@@ -344,8 +344,11 @@ model with custom data</h1>
 <ul>
 <li><a href="#load-your-library" id="toc-load-your-library">Load your
 library</a></li>
-<li><a href="#load-the-data" id="toc-load-the-data">Load the
-data</a></li>
+<li><a href="#try-to-use-unsuitable-data.-the-get_data-function-throws-an-error-indicating-that-the-method-column-is-missing-from-the-custom-user-supplied-data." id="toc-try-to-use-unsuitable-data.-the-get_data-function-throws-an-error-indicating-that-the-method-column-is-missing-from-the-custom-user-supplied-data.">Try
+to use unsuitable data. The <code>get_data</code> function throws an
+error indicating that the Method column is missing from the custom
+user-supplied data.</a></li>
+<li><a href="#load-the-suitable-data" id="toc-load-the-suitable-data">Load the suitable data</a></li>
 <li><a href="#get-the-jags-model-inputs-and-the-cleaned-data" id="toc-get-the-jags-model-inputs-and-the-cleaned-data">Get the JAGS
 model inputs and the cleaned data</a></li>
 <li><a href="#run-jags-model-and-get-posterior-point-estimates-with-uncertainty" id="toc-run-jags-model-and-get-posterior-point-estimates-with-uncertainty">Run
@@ -360,26 +363,35 @@ point estimates with uncertainty</a></li>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(mcmsupply)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
 </div>
-<div id="load-the-data" class="section level2">
-<h2>Load the data</h2>
+<div id="try-to-use-unsuitable-data.-the-get_data-function-throws-an-error-indicating-that-the-method-column-is-missing-from-the-custom-user-supplied-data." class="section level2">
+<h2>Try to use unsuitable data. The <code>get_data</code> function
+throws an error indicating that the Method column is missing from the
+custom user-supplied data.</h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>cleaned_data <span class="ot">&lt;-</span> <span class="fu">get_data</span>(<span class="at">national=</span><span class="cn">FALSE</span>, <span class="at">local=</span><span class="cn">TRUE</span>, </span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                         <span class="at">surveydata_filepath =</span> <span class="st">&quot;my_custom_data.xlsx&quot;</span>,</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                         <span class="at">mycountry=</span><span class="st">&quot;Nepal&quot;</span>)</span></code></pre></div>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                         <span class="at">surveydata_filepath =</span> <span class="st">&quot;~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_bad.xlsx&quot;</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                         <span class="at">mycountry=</span><span class="st">&quot;Ethiopia&quot;</span>)</span></code></pre></div>
+<pre><code>## Error in check_format(subnat_FPsource_format, subnat_FPsource_data): DATA FORMAT ERROR: Column Method is missing or incorrectly named.</code></pre>
+</div>
+<div id="load-the-suitable-data" class="section level2">
+<h2>Load the suitable data</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>cleaned_data <span class="ot">&lt;-</span> <span class="fu">get_data</span>(<span class="at">national=</span><span class="cn">FALSE</span>, <span class="at">local=</span><span class="cn">TRUE</span>, </span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                         <span class="at">surveydata_filepath =</span> <span class="st">&quot;~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_good.xlsx&quot;</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                         <span class="at">mycountry=</span><span class="st">&quot;Ethiopia&quot;</span>)</span></code></pre></div>
 </div>
 <div id="get-the-jags-model-inputs-and-the-cleaned-data" class="section level2">
 <h2>Get the JAGS model inputs and the cleaned data</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>pkg_data <span class="ot">&lt;-</span> <span class="fu">get_modelinputs</span>(<span class="at">startyear=</span><span class="dv">1990</span>, <span class="at">endyear=</span><span class="fl">2025.5</span>,</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>                            <span class="at">nsegments=</span><span class="dv">12</span>, <span class="at">raw_data =</span> cleaned_data)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>pkg_data <span class="ot">&lt;-</span> <span class="fu">get_modelinputs</span>(<span class="at">startyear=</span><span class="dv">1990</span>, <span class="at">endyear=</span><span class="fl">2025.5</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>                            <span class="at">nsegments=</span><span class="dv">12</span>, <span class="at">raw_data =</span> cleaned_data)</span></code></pre></div>
 </div>
 <div id="run-jags-model-and-get-posterior-point-estimates-with-uncertainty" class="section level2">
 <h2>Run JAGS model and get posterior point estimates with
 uncertainty</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">run_jags_model</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">jagsparams =</span> <span class="cn">NULL</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                      <span class="at">n_iter =</span> <span class="dv">40000</span>, <span class="at">n_burnin =</span> <span class="dv">10000</span>, <span class="at">n_thin =</span> <span class="dv">15</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">run_jags_model</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">jagsparams =</span> <span class="cn">NULL</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>                      <span class="at">n_iter =</span> <span class="dv">40000</span>, <span class="at">n_burnin =</span> <span class="dv">10000</span>, <span class="at">n_thin =</span> <span class="dv">15</span>)</span></code></pre></div>
 </div>
 <div id="plot-posterior-point-estimates-with-uncertainty" class="section level2">
 <h2>Plot posterior point estimates with uncertainty</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">plot_estimates</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">model_output =</span> mod)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">plot_estimates</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">model_output =</span> mod)</span></code></pre></div>
 </div>
 
 

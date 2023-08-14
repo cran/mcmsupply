@@ -5,10 +5,17 @@ knitr::opts_chunk$set(echo = TRUE)
 #  library(mcmsupply)
 #  library(dplyr)
 
+## ---- include=TRUE, message=FALSE, warning=FALSE, error=TRUE------------------
+
+cleaned_data <- get_data(national=FALSE, local=TRUE, 
+                         surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_bad.xlsx",
+                         mycountry="Ethiopia")
+
 ## ---- include=TRUE, message=FALSE, warning=FALSE, eval=FALSE------------------
+#  
 #  cleaned_data <- get_data(national=FALSE, local=TRUE,
-#                           surveydata_filepath = "my_custom_data.xlsx",
-#                           mycountry="Nepal")
+#                           surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_good.xlsx",
+#                           mycountry="Ethiopia")
 
 ## ---- include=TRUE, message=FALSE, warning=FALSE, eval=FALSE------------------
 #  pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5,

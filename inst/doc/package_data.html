@@ -410,17 +410,19 @@ there is a vignette
 data was calculated using the DHS micro-data. A similar approach was
 used for the subnational data using IPUMS data.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">head</span>(national_FPsource_data)</span></code></pre></div>
-<pre><code>## # A tibble: 6 × 9
-## # Groups:   year, Method, Country [2]
-##    year Country      Super_region Method average_year sector_category proportion
-##   &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt;
-## 1  2008 Sierra Leone Western Afr… Injec…        2008. Commercial_med…    0.265  
-## 2  2008 Sierra Leone Western Afr… Injec…        2008. Other              0.00540
-## 3  2008 Sierra Leone Western Afr… Injec…        2008. Public             0.730  
-## 4  2008 Sierra Leone Western Afr… OC Pi…        2008. Commercial_med…    0.587  
-## 5  2008 Sierra Leone Western Afr… OC Pi…        2008. Other              0.0224 
-## 6  2008 Sierra Leone Western Afr… OC Pi…        2008. Public             0.390  
-## # ℹ 2 more variables: SE.proportion &lt;dbl&gt;, n &lt;dbl&gt;</code></pre>
+<pre><code>## # A tibble: 6 × 15
+## # Rowwise: 
+##   Country     Method   average_year  year country_code Public se.Public Public_n
+##   &lt;chr&gt;       &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 Afghanistan Injecta…        2016.  2015 AF            0.626    0.0238      931
+## 2 Afghanistan IUD             2016.  2015 AF            0.603    0.0497      211
+## 3 Afghanistan Pill            2016.  2015 AF            0.363    0.0265      642
+## 4 Afghanistan Female …        2016.  2015 AF            0.709    0.0311      270
+## 5 Benin       Injecta…        1996.  1996 BJ            0.732    0.0933       22
+## 6 Benin       Pill            1996.  1996 BJ            0.304    0.0751       15
+## # ℹ 7 more variables: Commercial_medical &lt;dbl&gt;, se.Commercial_medical &lt;dbl&gt;,
+## #   Commercial_medical_n &lt;dbl&gt;, Other &lt;dbl&gt;, se.Other &lt;dbl&gt;, Other_n &lt;dbl&gt;,
+## #   check_sum &lt;dbl&gt;</code></pre>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">head</span>(subnat_FPsource_data)</span></code></pre></div>
 <pre><code>##       Country     Region               Method average_year  sector_categories
 ## 1 Afghanistan Badakhshan Female Sterilization       2015.5 Commercial_medical
@@ -506,19 +508,19 @@ subnational level. For an example of how to calculate the subnational
 correlations, please review the
 <code>inst/data-raw/estimated_global_subnational_correlations.R</code>
 script.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>national_estimated_correlations_logitnormal</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>mcmsupply<span class="sc">::</span>national_estimated_correlations_bivarlogitnormal</span></code></pre></div>
 <pre><code>## # A tibble: 10 × 4
 ##    row         column               public_cor private_cor
 ##    &lt;chr&gt;       &lt;chr&gt;                     &lt;dbl&gt;       &lt;dbl&gt;
-##  1 Implants    Female Sterilization       -0.1         0.2
-##  2 Injectables Female Sterilization        0.1         0.3
-##  3 IUD         Female Sterilization        0.2        -0.1
-##  4 OC Pills    Female Sterilization        0           0.5
-##  5 Injectables Implants                    0.1         0.1
-##  6 IUD         Implants                    0           0.1
-##  7 OC Pills    Implants                    0           0.1
-##  8 IUD         Injectables                 0.3         0  
-##  9 OC Pills    Injectables                 0.3         0.6
+##  1 Implants    Female Sterilization        0           0  
+##  2 Injectables Female Sterilization        0           0.1
+##  3 IUD         Female Sterilization        0           0  
+##  4 OC Pills    Female Sterilization        0           0.1
+##  5 Injectables Implants                    0           0  
+##  6 IUD         Implants                    0           0  
+##  7 OC Pills    Implants                    0           0  
+##  8 IUD         Injectables                 0           0  
+##  9 OC Pills    Injectables                 0.2         0.1
 ## 10 OC Pills    IUD                         0           0</code></pre>
 </div>
 <div id="section-4" class="section level2">
@@ -560,56 +562,56 @@ associated variance with these country-specific intercepts.
 <code>national_sigma_delta_hat_logitnormal</code> is the
 variance-covariance matrix used to inform the multivariate normal prior
 describing the first-order differences of the spline coefficients (<span class="math inline">\(\delta_{k}\)</span>).</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>national_theta_rms_hat_logitnormal</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>national_theta_rms_hat_bivarlogitnorm</span></code></pre></div>
 <pre><code>## , , 1
 ## 
-##          [,1]     [,2]      [,3]      [,4]       [,5]
-## [1,] 1.249159 2.070650 0.8150694 0.8351716 -0.3618433
-## [2,] 4.697687 3.957151 3.2532750 3.9852985  1.8067348
+##          [,1]     [,2]      [,3]      [,4]      [,5]
+## [1,] 1.180615 1.888212 0.6141703 0.7854091 -0.426106
+## [2,] 4.692518 6.083164 3.3240836 5.8393139  2.016672
 ## 
 ## , , 2
 ## 
-##          [,1]     [,2]     [,3]     [,4]       [,5]
-## [1,] 1.376513 2.286960 1.573428 1.341242 -0.1465728
-## [2,] 4.795694 3.940106 3.190674 4.007378  1.7790397
+##          [,1]     [,2]     [,3]     [,4]      [,5]
+## [1,] 1.890405 2.480387 1.682206 1.709733 -0.162094
+## [2,] 4.956777 6.083251 3.318828 5.915848  2.023235
 ## 
 ## , , 3
 ## 
-##          [,1]     [,2]     [,3]      [,4]       [,5]
-## [1,] 1.320625 1.926888 1.034959 0.9814598 -0.3406822
-## [2,] 4.769773 3.959479 3.162212 4.0308014  1.6860585
+##          [,1]     [,2]      [,3]      [,4]       [,5]
+## [1,] 1.359317 1.609358 0.9664363 0.9838936 -0.5518752
+## [2,] 4.919760 6.062002 3.2861097 5.8491961  1.9003978
 ## 
 ## , , 4
 ## 
-##          [,1]     [,2]     [,3]     [,4]       [,5]
-## [1,] 1.375605 2.120323 1.250110 1.003652 0.05561342
-## [2,] 4.829254 3.975132 3.040217 4.024459 1.80821678
+##          [,1]     [,2]     [,3]     [,4]      [,5]
+## [1,] 1.472307 1.954257 1.264400 1.087002 0.1910155
+## [2,] 4.928083 6.086622 3.087511 5.914234 2.0219521
 ## 
 ## , , 5
 ## 
 ##          [,1]     [,2]     [,3]     [,4]       [,5]
-## [1,] 1.296849 1.955052 1.346922 1.016543 -0.4403457
-## [2,] 4.792849 3.945850 3.111354 4.035768  1.6824287</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>national_tau_alpha_cms_hat_logitnormal</span></code></pre></div>
-<pre><code>## [1] 1.0646336 0.5248405</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>national_sigma_delta_hat_logitnormal</span></code></pre></div>
+## [1,] 1.318863 1.144550 1.425389 1.017408 -0.7167363
+## [2,] 4.876858 6.087155 3.161759 5.814235  1.8449065</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>national_tau_alpha_cms_hat_bivarlogitnorm</span></code></pre></div>
+<pre><code>## [1] 1.5727330 0.4712268</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>national_inv_sigma_delta_hat_bivarlogitnorm</span></code></pre></div>
 <pre><code>## , , 1
 ## 
-##               [,1]          [,2]          [,3]          [,4]          [,5]
-## [1,]  0.0991520125 -2.190587e-02  1.303866e-02  3.618206e-02 -5.535370e-05
-## [2,] -0.0219058745  4.886624e-01 -1.228233e-05 -4.402929e-05 -1.169577e-05
-## [3,]  0.0130386568 -1.228233e-05  1.735814e-01  4.797294e-02  9.389956e-02
-## [4,]  0.0361820626 -4.402929e-05  4.797294e-02  1.480116e-01  2.160856e-02
-## [5,] -0.0000553537 -1.169577e-05  9.389956e-02  2.160856e-02  3.189988e-01
+##          [,1]     [,2]       [,3]     [,4]       [,5]
+## [1,] 9.244893 0.000000  0.0000000 0.000000  0.0000000
+## [2,] 0.000000 3.312823  0.0000000 0.000000  0.0000000
+## [3,] 0.000000 0.000000  4.9438497 0.000000 -0.9373997
+## [4,] 0.000000 0.000000  0.0000000 7.595903  0.0000000
+## [5,] 0.000000 0.000000 -0.9373997 0.000000  4.5271020
 ## 
 ## , , 2
 ## 
-##               [,1]          [,2]          [,3]          [,4]        [,5]
-## [1,] 21.3252743225 -0.0001199836  1.517820e-03 -5.292215e-04  0.54260650
-## [2,] -0.0001199836  0.0501140075  1.122724e-04  8.290538e-03 -0.02782262
-## [3,]  0.0015178205  0.0001122724  1.885885e+00 -7.206972e-05  0.32481292
-## [4,] -0.0005292215  0.0082905381 -7.206972e-05  5.737919e-02 -0.03070133
-## [5,]  0.5426065025 -0.0278226156  3.248129e-01 -3.070133e-02  1.38878954</code></pre>
+##            [,1]     [,2]       [,3]     [,4]       [,5]
+## [1,] 358.226463   0.0000 -1.1324200   0.0000 -1.1595122
+## [2,]   0.000000 109.0913  0.0000000   0.0000  0.0000000
+## [3,]  -1.132420   0.0000  1.5892782   0.0000 -0.1291122
+## [4,]   0.000000   0.0000  0.0000000 335.5074  0.0000000
+## [5,]  -1.159512   0.0000 -0.1291122   0.0000  1.5002134</code></pre>
 </div>
 <div id="section-6" class="section level2">
 <h2><a name="cu"></a></h2>

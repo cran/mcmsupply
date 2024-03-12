@@ -10,7 +10,6 @@ head(national_FPsource_data)
 ## -----------------------------------------------------------------------------
 head(subnat_FPsource_data)
 
-
 ## -----------------------------------------------------------------------------
 Country_and_area_classification
 ??Country_and_area_classification
@@ -20,19 +19,19 @@ country_names
 ??country_names
 
 ## -----------------------------------------------------------------------------
-national_estimated_correlations_logitnormal
+mcmsupply::national_estimated_correlations_bivarlogitnormal
 
 ## -----------------------------------------------------------------------------
 subnational_estimated_correlations
 
 ## -----------------------------------------------------------------------------
-national_theta_rms_hat_logitnormal
+national_theta_rms_hat_bivarlogitnorm
 
 ## -----------------------------------------------------------------------------
-national_tau_alpha_cms_hat_logitnormal
+national_tau_alpha_cms_hat_bivarlogitnorm
 
 ## -----------------------------------------------------------------------------
-national_sigma_delta_hat_logitnormal
+national_inv_sigma_delta_hat_bivarlogitnorm
 
 ## -----------------------------------------------------------------------------
 subnational_alpha_cms_hat

@@ -358,6 +358,8 @@ diagnostics</a></li>
 point estimates with uncertainty</a></li>
 <li><a href="#pull-out-estimates-that-you-are-particularly-interested-in" id="toc-pull-out-estimates-that-you-are-particularly-interested-in">Pull
 out estimates that you are particularly interested in</a></li>
+<li><a href="#review-the-complete-posterior-sample-of-estimated-method-supply-shares" id="toc-review-the-complete-posterior-sample-of-estimated-method-supply-shares">Review
+the complete posterior sample of estimated method-supply shares</a></li>
 </ul>
 </div>
 
@@ -380,7 +382,7 @@ Lastly, state the name of the country you have custom data for.</p>
 <p>You will get an error when you run this function. The data we
 supplied does not have the Method column. The warning message is telling
 you to check your input as the column ‘Method’ is either missing or
-incorrectly named.</p>
+incorrectly named, along with many others.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>cleaned_data <span class="ot">&lt;-</span> <span class="fu">get_data</span>(<span class="at">national=</span><span class="cn">TRUE</span>, <span class="at">local=</span><span class="cn">TRUE</span>, </span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                         <span class="at">surveydata_filepath =</span> <span class="st">&quot;~/Documents/R/mcmsupply/inst/data-raw/my_custom_national_data_bad.xlsx&quot;</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                         <span class="at">mycountry=</span><span class="st">&quot;Ethiopia&quot;</span>)</span></code></pre></div>
@@ -399,17 +401,27 @@ runs without an error message.</p>
 </div>
 <div id="get-the-jags-model-inputs-and-the-cleaned-data" class="section level2">
 <h2>Get the JAGS model inputs and the cleaned data</h2>
-<p>The rest of the mcmsupply workflow is the exact same as in the other
-vignettes, we continue to set up our model inputs and run the JAGS
-model.</p>
+<p>During this step, we must supply the ‘get_modelinputs’ function with
+the associated variance-covariance arrays associated with the custom
+data supplied. Each survey year and method should have a corresponding
+matrix within the array of the supplied variance-covariance. Please
+beware that the order of the matrices (in terms of method-year
+combinations) within the array should match the order of the custom
+data, otherwise there will be a mismatch during the model estimation
+step.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>pkg_data <span class="ot">&lt;-</span> <span class="fu">get_modelinputs</span>(<span class="at">startyear=</span><span class="dv">1990</span>, <span class="at">endyear=</span><span class="fl">2025.5</span>,</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>                            <span class="at">nsegments=</span><span class="dv">12</span>, <span class="at">raw_data =</span> cleaned_data)</span></code></pre></div>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>                            <span class="at">nsegments=</span><span class="dv">12</span>, <span class="at">raw_data =</span> cleaned_data,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>                            <span class="at">varcov_array_filepath =</span> <span class="st">&#39;~/Documents/R/mcmsupply/inst/data-raw/mycovvar_array.RDS&#39;</span>)</span></code></pre></div>
 </div>
 <div id="run-jags-model-and-get-posterior-point-estimates-with-uncertainty" class="section level2">
 <h2>Run JAGS model and get posterior point estimates with
 uncertainty</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">run_jags_model</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">jagsparams =</span> <span class="cn">NULL</span>,</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>                      <span class="at">n_iter =</span> <span class="dv">40000</span>, <span class="at">n_burnin =</span> <span class="dv">10000</span>, <span class="at">n_thin =</span> <span class="dv">15</span>)</span></code></pre></div>
+<p>The rest of the mcmsupply workflow is the exact same as in the other
+vignettes, we continue to set up our model inputs and run the JAGS
+model. For demonstartion purposes, the model settings are set too low,
+the suggested settings are commented out in the code below.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">run_jags_model</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">jagsparams =</span> <span class="cn">NULL</span>, <span class="at">n_iter =</span> <span class="dv">40</span>, <span class="at">n_burnin =</span> <span class="dv">10</span>, <span class="at">n_thin =</span> <span class="dv">1</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>                     <span class="co"># n_iter = 40000, n_burnin = 10000, n_thin = 15)</span></span></code></pre></div>
 </div>
 <div id="check-the-model-diagnostics" class="section level2">
 <h2>Check the model diagnostics</h2>
@@ -435,13 +447,28 @@ iterations.</p>
 </div>
 <div id="plot-posterior-point-estimates-with-uncertainty" class="section level2">
 <h2>Plot posterior point estimates with uncertainty</h2>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">plot_estimates</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">model_output =</span> mod)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">plot_estimates</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">model_output =</span> mod)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>plots[[<span class="dv">1</span>]]</span></code></pre></div>
 </div>
 <div id="pull-out-estimates-that-you-are-particularly-interested-in" class="section level2">
 <h2>Pull out estimates that you are particularly interested in</h2>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>estimates_2018 <span class="ot">&lt;-</span> <span class="fu">pull_estimates</span>(<span class="at">model_output =</span> mod, <span class="at">country =</span> <span class="st">&#39;Ethiopia&#39;</span>, <span class="at">year=</span><span class="dv">2018</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="fu">head</span>(estimates_2018)</span></code></pre></div>
+</div>
+<div id="review-the-complete-posterior-sample-of-estimated-method-supply-shares" class="section level1">
+<h1>Review the complete posterior sample of estimated method-supply
+shares</h1>
+<p>This function will allow you to pull out the posterior sample of
+estimated method supply shares. The posterior sample will be of size
+‘nposterior’. Note that ‘nposterior’ should not be larger than your
+total iterations (given in ‘run_jags_model’) In this example, we supply
+the JAGS model object and the JAGS input data to the function, we set
+‘nposterior=4’ to pull out 4 posterior samples.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>post_samps <span class="ot">&lt;-</span> <span class="fu">get_posterior_P_samps</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">model_output =</span> mod, <span class="at">nposterior=</span><span class="dv">4</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="fu">head</span>(post_samps)</span></code></pre></div>
 </div>
 
 

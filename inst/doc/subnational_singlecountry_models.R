@@ -23,19 +23,19 @@ knitr::opts_chunk$set(echo = TRUE)
 #  sample_draws <- tidybayes::tidy_draws(mod$JAGS$BUGSoutput$sims.matrix)
 #  
 #  var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1,1]`) %>%
-#    dplyr::mutate(chain = rep(1:2, each=2000)) %>%
-#    dplyr::mutate(iteration = rep(1:2000, 2))
+#    dplyr::mutate(chain = 1, # rep(1:mod$JAGS$BUGSoutput$n.chains, each=mod$JAGS$BUGSoutput$n.sims)),
+#                  iteration = 3) # rep(1:mod$JAGS$BUGSoutput$n.sims, mod$JAGS$BUGSoutput$n.chains))
 #  
 #  ggplot2::ggplot(data=var) +
 #    ggplot2::geom_line(ggplot2::aes(x=iteration, y=`P[1,2,1,1]`, color=as.factor(chain)))
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
-#  plot(mod$JAGS)
+#  head(mod$JAGS$BUGSoutput$summary)
 #  
-#  print(mod$JAGS)
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
+#  plots[[1]]
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  estimates_2018 <- pull_estimates(model_output = mod, country = 'Nepal', year=2018)

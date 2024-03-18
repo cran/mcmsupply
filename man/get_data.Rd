@@ -28,8 +28,7 @@ names of potential countries, review vigentte.}
 Planning 2030 focus countries discussed in the Comiskey et al. paper.}
 
 \item{surveydata_filepath}{Path to survey data. Default is NULL. Survey data
-should be a .xlsx with the following format
-\code{\link{national_FPsource_data}}.}
+should be a .xlsx with the following format \code{\link{national_FPsource_data}}.}
 }
 \value{
 returns a list containing the DHS data set used for inputs into the

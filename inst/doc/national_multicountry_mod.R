@@ -42,3 +42,8 @@ knitr::opts_chunk$set(echo = TRUE)
 #  
 #  head(estimates_2018)
 
+## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
+#  post_samps <- get_posterior_P_samps(jagsdata = pkg_data, model_output = mod, nposterior=4)
+#  
+#  head(post_samps)
+

@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #  pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5, nsegments=12,
 #                              raw_data = cleaned_natdata)
 #  
+#  pkg_data
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
@@ -36,9 +37,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
 #  
+#  plots[[1]]
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  estimates_2018 <- pull_estimates(model_output = mod, country = cleaned_natdata$args$mycountry, year=2018)
 #  
 #  head(estimates_2018)
+
+## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
+#  post_samps <- get_posterior_P_samps(jagsdata = pkg_data, model_output = mod, nposterior=4)
+#  
+#  head(post_samps)
 

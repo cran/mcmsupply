@@ -20,12 +20,13 @@ cleaned_data <- get_data(national=TRUE, local=TRUE,
 
 ## ---- include=TRUE, message=FALSE, warning=FALSE, eval=FALSE------------------
 #  pkg_data <- get_modelinputs(startyear=1990, endyear=2025.5,
-#                              nsegments=12, raw_data = cleaned_data)
+#                              nsegments=12, raw_data = cleaned_data,
+#                              varcov_array_filepath = '~/Documents/R/mcmsupply/inst/data-raw/mycovvar_array.RDS')
 #  
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
-#  mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL,
-#                        n_iter = 40000, n_burnin = 10000, n_thin = 15)
+#  mod <- run_jags_model(jagsdata = pkg_data, jagsparams = NULL, n_iter = 40, n_burnin = 10, n_thin = 1)
+#                       # n_iter = 40000, n_burnin = 10000, n_thin = 15)
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  plot(mod$JAGS)
@@ -44,9 +45,16 @@ cleaned_data <- get_data(national=TRUE, local=TRUE,
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
+#  
+#  plots[[1]]
 
 ## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
 #  estimates_2018 <- pull_estimates(model_output = mod, country = 'Ethiopia', year=2018)
 #  
 #  head(estimates_2018)
+
+## ---- include=TRUE, message=FALSE, eval=FALSE---------------------------------
+#  post_samps <- get_posterior_P_samps(jagsdata = pkg_data, model_output = mod, nposterior=4)
+#  
+#  head(post_samps)
 

@@ -371,14 +371,14 @@ out estimates that you are particularly interested in</a></li>
 throws an error indicating that the Method column is missing from the
 custom user-supplied data.</h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>cleaned_data <span class="ot">&lt;-</span> <span class="fu">get_data</span>(<span class="at">national=</span><span class="cn">FALSE</span>, <span class="at">local=</span><span class="cn">TRUE</span>, </span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                         <span class="at">surveydata_filepath =</span> <span class="st">&quot;~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_bad.xlsx&quot;</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                         <span class="at">surveydata_filepath =</span> <span class="st">&quot;~/Documents/R/mcmsupply/inst/data-raw/my_custom_subnational_data_bad.xlsx&quot;</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                         <span class="at">mycountry=</span><span class="st">&quot;Ethiopia&quot;</span>)</span></code></pre></div>
 <pre><code>## Error in check_format(subnat_FPsource_format, subnat_FPsource_data): DATA FORMAT ERROR: Column Method is missing or incorrectly named.</code></pre>
 </div>
 <div id="load-the-suitable-data" class="section level2">
 <h2>Load the suitable data</h2>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>cleaned_data <span class="ot">&lt;-</span> <span class="fu">get_data</span>(<span class="at">national=</span><span class="cn">FALSE</span>, <span class="at">local=</span><span class="cn">TRUE</span>, </span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                         <span class="at">surveydata_filepath =</span> <span class="st">&quot;~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_good.xlsx&quot;</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                         <span class="at">surveydata_filepath =</span> <span class="st">&quot;~/Documents/R/mcmsupply/inst/data-raw/my_custom_subnational_data_good.xlsx&quot;</span>,</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                         <span class="at">mycountry=</span><span class="st">&quot;Ethiopia&quot;</span>)</span></code></pre></div>
 </div>
 <div id="get-the-jags-model-inputs-and-the-cleaned-data" class="section level2">

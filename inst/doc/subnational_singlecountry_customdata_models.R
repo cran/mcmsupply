@@ -9,13 +9,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ## ---- include=TRUE, message=FALSE, warning=FALSE, error=TRUE------------------
 
 cleaned_data <- get_data(national=FALSE, local=TRUE, 
-                         surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_bad.xlsx",
+                         surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_subnational_data_bad.xlsx",
                          mycountry="Ethiopia")
 
 ## ---- include=TRUE, message=FALSE, warning=FALSE, eval=FALSE------------------
 #  
 #  cleaned_data <- get_data(national=FALSE, local=TRUE,
-#                           surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_data_good.xlsx",
+#                           surveydata_filepath = "~/Documents/R/mcmsupply/inst/data-raw/my_custom_subnational_data_good.xlsx",
 #                           mycountry="Ethiopia")
 
 ## ---- include=TRUE, message=FALSE, warning=FALSE, eval=FALSE------------------

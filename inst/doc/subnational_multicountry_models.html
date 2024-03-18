@@ -377,15 +377,8 @@ out estimates that you are particularly interested in</a></li>
 <div id="run-jags-model-and-get-posterior-point-estimates-with-uncertainty." class="section level2">
 <h2>Run JAGS model and get posterior point estimates with
 uncertainty.</h2>
-<p>For speed and illustation purposes, we will use 10 itterations, with
-no burn in period and taking every third sample. This leaves only 9
-samples. We DO NOT recommend this setting. The recommended settings are
-80000 itterations, with 10000 burn in period and taking every 35th
-sample. This is commented out and listed underneath the below R
-code.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">run_jags_model</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">jagsparams =</span> <span class="cn">NULL</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                      <span class="at">n_iter =</span> <span class="dv">10</span>, <span class="at">n_burnin =</span> <span class="dv">1</span>, <span class="at">n_thin =</span> <span class="dv">3</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                     <span class="co"># n_iter = 80000, n_burnin = 10000, n_thin = 35)</span></span></code></pre></div>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                      <span class="at">n_iter =</span> <span class="dv">80000</span>, <span class="at">n_burnin =</span> <span class="dv">10000</span>, <span class="at">n_thin =</span> <span class="dv">35</span>)</span></code></pre></div>
 </div>
 <div id="check-the-model-diagnostics" class="section level1">
 <h1>Check the model diagnostics</h1>

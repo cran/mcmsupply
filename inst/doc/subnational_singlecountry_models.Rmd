@@ -60,8 +60,8 @@ We use this to evaluate the convergence of the model parameters. We should expec
 sample_draws <- tidybayes::tidy_draws(mod$JAGS$BUGSoutput$sims.matrix)
 
 var <- sample_draws %>% dplyr::select(.chain, .iteration, .draw,`P[1,2,1,1]`) %>%
-  dplyr::mutate(chain = rep(1:2, each=2000)) %>%
-  dplyr::mutate(iteration = rep(1:2000, 2))
+  dplyr::mutate(chain = 1, # rep(1:mod$JAGS$BUGSoutput$n.chains, each=mod$JAGS$BUGSoutput$n.sims)),
+                iteration = 3) # rep(1:mod$JAGS$BUGSoutput$n.sims, mod$JAGS$BUGSoutput$n.chains))
 
 ggplot2::ggplot(data=var) +
   ggplot2::geom_line(ggplot2::aes(x=iteration, y=`P[1,2,1,1]`, color=as.factor(chain)))
@@ -74,9 +74,8 @@ We expect to see a 'caterpillar' like appearance of the chains over the iteratio
 
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
-plot(mod$JAGS)
+head(mod$JAGS$BUGSoutput$summary)
 
-print(mod$JAGS)
 ```
 
 
@@ -84,6 +83,7 @@ print(mod$JAGS)
 
 ```{r, include=TRUE, message=FALSE, eval=FALSE}
 plots <- plot_estimates(jagsdata = pkg_data, model_output = mod)
+plots[[1]]
 ```
 
 

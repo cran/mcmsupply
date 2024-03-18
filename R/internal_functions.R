@@ -246,7 +246,7 @@ flat_cor_mat <- function(cor_r){
 #' @return returns the DHS data set used for inputs into the model
 #' @noRd
 
-get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL) {
+get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveydata_filepath=NULL, varcov_array_filepath=NULL) {
   if(is.null(surveydata_filepath)==TRUE){
     message("Using preloaded dataset!")
     national_FPsource_data <- mcmsupply::national_FPsource_data # Read in all the data
@@ -286,6 +286,7 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 
   # Filter where the sample size is smaller than 2 people across all three sectors ---------
   FP_source_data_wide <- national_FPsource_data %>% # Proportion data
+    dplyr::filter(is.na(Country)==FALSE) %>% # Remove any rows with missing country names
     dplyr::rename(Public.SE = se.Public,
            Commercial_medical.SE = se.Commercial_medical,
            Other.SE = se.Other) %>%
@@ -324,39 +325,22 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 
   col_index <- which(colnames(SE_source_data_wide_X)=="Commercial_medical.SE")-1 # column index before CM column, as CM=1
 
+  if(nrow(SE_source_data_wide_X)>0) {
   # Add in DEFT data to calculate variance
   SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database)
 
   # For an explanation fo this approach see: https://onlinestatbook.com/2/sampling_distributions/samp_dist_p.html
 
-  for(i in 1:nrow(SE_source_data_wide_X)) {
-    num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]<0.0001)
-    num.SEna <- which(is.na(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")])==TRUE)
-    DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
-    N1 <- sum(SE_source_data_wide_X[i, c('Other_n', 'Public_n', 'Commercial_medical_n')], na.rm=TRUE) # Number of women surveyed
-    phat <- 0.5/(N1+1) # Posterior mean of p under Jefferys prior for true prevalence of 0s.
-    SE.hat <- sqrt((phat*(1-phat))/N1) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
-    SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
+    for(i in 1:nrow(SE_source_data_wide_X)) {
+      num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]<0.0001)
+      num.SEna <- which(is.na(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")])==TRUE)
+      DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
+      N1 <- sum(SE_source_data_wide_X[i, c('Other_n', 'Public_n', 'Commercial_medical_n')], na.rm=TRUE) # Number of women surveyed
+      phat <- 0.5/(N1+1) # Posterior mean of p under Jefferys prior for true prevalence of 0s.
+      SE.hat <- sqrt((phat*(1-phat))/N1) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
+      SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
+    }
   }
-
-  # if(nrow(SE_source_data_wide_X)>0) {
-  #   for(i in 1:nrow(SE_source_data_wide_X)) {
-  #     SE_source_data_wide_X <- SE_source_data_wide_X %>% dplyr::left_join(mcmsupply::DEFT_DHS_database) # Add DEFT data
-  #     num.SE0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]==0)
-  #     num.SEnon0 <- which(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")]!=0)
-  #     num.SEna <- which(is.na(SE_source_data_wide_X[i,c("Commercial_medical.SE","Other.SE","Public.SE")])==TRUE)
-  #     if(length(num.SE0)==1 & length(num.SEnon0)>0) {
-  #       mean.SE <- mean(as.vector(unlist(SE_source_data_wide_X[i,col_index+num.SEnon0]))) # Noticed that other two columns have identical SE. Assign SE to third column.
-  #       SE_source_data_wide_X[i,col_index+num.SE0] <- mean.SE
-  #     } else{
-  #       DEFT <- ifelse(is.na(SE_source_data_wide_X$DEFT[i])==TRUE, 1.5, SE_source_data_wide_X$DEFT[i])
-  #       N1 <- length(which(SE_source_data_wide_X$Public>0.99)) + length(which(SE_source_data_wide_X$Commercial_medical>0.99)) # Number of obs=1
-  #       phat <- (N1 + 1/2)/(nrow(FP_source_data_wide)+1)
-  #       SE.hat <- sqrt((phat*(1-phat))/(N1+1)) # approximation of standard error. See DHS Sampling Manual, section '1.6.1 Sample size and sampling errors' for more details.
-  #       SE_source_data_wide_X[i,c(col_index+num.SEna,col_index+num.SE0)] <- SE.hat*DEFT
-  #     }
-  #   }
-  # }
 
   FP_source_data_wide <- dplyr::bind_rows(SE_source_data_wide_norm, SE_source_data_wide_X) # Put data back together again
 
@@ -377,14 +361,20 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 
   method_order <- c("Female sterilization", "Implants", "Injectables", "IUD", "Pill" ) # As per the method correlation matrix
   n_method <- c("Female Sterilization","Implants", "Injectables", "IUD","OC Pills")
-  row_order <- mcmsupply::national_varcov_order_bivarlogitnormal # Order of variance covariance matrices arrays
-  FP_source_data_wide <- dplyr::left_join(row_order, FP_source_data_wide) # ensure to match the order of the varcov
-
-  if(local==TRUE & is.null(mycountry)==FALSE) { # Subset data for country of interest ---------------------------
-    message(paste0("Getting data for ",mycountry))
-    FP_source_data_wide <- FP_source_data_wide %>% dplyr::filter(Country==mycountry) %>% dplyr::arrange(Country, Super_region, Method, average_year)
-  }
-
+  if(is.null(surveydata_filepath)==TRUE) { # Set up for using stored variance-covariance if no custom data is supplied
+    row_order <- mcmsupply::national_varcov_order_bivarlogitnormal # Order of variance covariance matrices arrays
+    row_order <- row_order %>% dplyr::left_join(area_classification) %>%
+      dplyr::mutate(Super_region = dplyr::case_when(Country=="Bolivia" ~ "South America",
+                                                    Country=="Kyrgyz Republic" ~ "Central Asia",
+                                                    Country=="Moldova" ~ "Eastern Europe",
+                                                    TRUE ~ as.character(Super_region)))
+      if(local==TRUE & is.null(mycountry)==FALSE) { # Subset data for country of interest ---------------------------
+        message(paste0("Getting data for ",mycountry))
+        row_order <- row_order %>% dplyr::filter(Country==mycountry)
+        FP_source_data_wide <- FP_source_data_wide %>% dplyr::filter(Country==mycountry) %>% dplyr::arrange(Country, Super_region, Method, average_year)
+      }
+    FP_source_data_wide <- dplyr::left_join(row_order, FP_source_data_wide)
+    }
   return(FP_source_data_wide)
 }
 
@@ -398,23 +388,38 @@ get_national_data <- function(local=FALSE, mycountry=NULL, fp2030=TRUE, surveyda
 
 get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL) {
   if(local==TRUE & is.null(mycountry)==FALSE) {
-    local_parms <- get_national_local_parameters(mycountry=mycountry) # Get parameters for local informative priors for national data
-    jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
-                     # se_prop = pkg_data$data[,c("logit.Public.SE", "logit.CM.SE")],
-                      Sigma_y = local_parms$Sigma_y,
-                      alphahat_region = local_parms$alphahat_region,
-                      tau_alphahat_cms = local_parms$tau_alphahat_cms,
-                      inv.sigma_delta = local_parms$natRmat, # dwish on inverse
-                      #natdf = length(pkg_data$n_method)+3,
-                      kstar = pkg_data$kstar,
-                      B.ik = pkg_data$B.ik,
-                      n_years = pkg_data$n_years,
-                      n_obs = pkg_data$n_obs,
-                      K = pkg_data$K,
-                      H = pkg_data$H,
-                      M_count = pkg_data$M_count,
-                      matchmethod = pkg_data$matchmethod,
-                      matchyears = pkg_data$matchyears)
+    local_parms <- get_national_local_parameters(mycountry=mycountry, custom=pkg_data$custom) # Get parameters for local informative priors for national data
+    if(pkg_data$custom==FALSE) { # use stored varcov matrix
+      jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                        Sigma_y = local_parms$Sigma_y,
+                        alphahat_region = local_parms$alphahat_region,
+                        tau_alphahat_cms = local_parms$tau_alphahat_cms,
+                        inv.sigma_delta = local_parms$natRmat,
+                        kstar = pkg_data$kstar,
+                        B.ik = pkg_data$B.ik,
+                        n_years = pkg_data$n_years,
+                        n_obs = pkg_data$n_obs,
+                        K = pkg_data$K,
+                        H = pkg_data$H,
+                        M_count = pkg_data$M_count,
+                        matchmethod = pkg_data$matchmethod,
+                        matchyears = pkg_data$matchyears)
+    } else { # use custom supplied varcov matrix
+      jags_data <- list(y = pkg_data$data[,c("logit.Public", "logit.CM")], # create JAGS list
+                        Sigma_y = pkg_data$Sigma_y,
+                        alphahat_region = local_parms$alphahat_region,
+                        tau_alphahat_cms = local_parms$tau_alphahat_cms,
+                        inv.sigma_delta = local_parms$natRmat,
+                        kstar = pkg_data$kstar,
+                        B.ik = pkg_data$B.ik,
+                        n_years = pkg_data$n_years,
+                        n_obs = pkg_data$n_obs,
+                        K = pkg_data$K,
+                        H = pkg_data$H,
+                        M_count = pkg_data$M_count,
+                        matchmethod = pkg_data$matchmethod,
+                        matchyears = pkg_data$matchyears)
+    }
   } else {
     estimated_rho_matrix <- mcmsupply::national_estimated_correlations_bivarlogitnormal %>% # Get global correlations for national data
       dplyr::select(row, column, public_cor, private_cor)
@@ -443,12 +448,12 @@ get_national_JAGSinput_list <- function(pkg_data, local= FALSE,  mycountry=NULL)
 
 #' Get the country-specific median and precision terms for the alpha intercept in local national-level model runs.
 #' @name get_national_local_parameters
-#' @param mycountry The name of country of interest. Default is NULL. For the names of potential countries, review vigentte.
+#' @param mycountry The name of country of interest. Default is NULL. For the names of potential countries, review vignette.
 #' @param fp2030 Default to be TRUE. The country of interest is named as one of the Family Planning 2030 focus countries discussed in the Comiskey et al. paper.
-#' @return A list of local parameters to be used to inform the intercept parameter alpha and the global variance-covariance matrix used in the wishart prior of the local_model_run.txt file.
+#' @return A list of local parameters to be used to inform the intercept parameter alpha and the global variance-covariance matrix used in 'singlecountry_national_bivarlogitnormal_model.jags' file.
 #' @noRd
 
-get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
+get_national_local_parameters <- function(mycountry=NULL, custom=FALSE, fp2030=TRUE) {
 
   # Read in national alpha estimates ---------------------------------
   median_alpha_region_intercepts <- mcmsupply::national_theta_rms_hat_bivarlogitnorm # read in regional-level (alpha_rms) median estimates
@@ -467,23 +472,28 @@ get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
   dimnames(median_alpha_region_intercepts)[[3]] <- as.list(unlist(region_index_table$Super_region)) # Apply region names to parameter estimates
   myalpha_med <- median_alpha_region_intercepts[,,unique(region_country_match$Super_region)] # Take out relevant region
 
-  # Get country-specific covariance matrix
-  mySigma_y <- mcmsupply::national_FPsource_VARCOV_bivarlogitnormal[,,region_country_match$row_id]
-
-  return(list(alphahat_region = myalpha_med,
-              tau_alphahat_cms = precision_alpha_country_intercepts,
-              natRmat = Bspline_sigma_matrix_median,
-              Sigma_y = mySigma_y))
+  if(custom==FALSE) { # Use stored country-specific covariance matrix
+    mySigma_y <- mcmsupply::national_FPsource_VARCOV_bivarlogitnormal[,,region_country_match$row_id]
+    return(list(alphahat_region = myalpha_med,
+                tau_alphahat_cms = precision_alpha_country_intercepts,
+                natRmat = Bspline_sigma_matrix_median,
+                Sigma_y = mySigma_y))
+  } else {
+    return(list(alphahat_region = myalpha_med,
+                tau_alphahat_cms = precision_alpha_country_intercepts,
+                natRmat = Bspline_sigma_matrix_median))
+  }
 }
 
 #' Get JAGS model inputs
 #' @name get_national_modelinputs
-#' @param local TRUE/FALSE. Default is FALSE. local=FALSE retrieves the data for all subnational provinces across all countries. local=TRUE retrieves data for only one country.
+#' @param local TRUE/FALSE. Default is FALSE. When local=FALSE retrieves the data for all countries. local=TRUE retrieves data for only one country.
 #' @param mycountry The country name of interest in a local run. You must have local=TRUE for this functionality. A list of possible countries available found in data/mycountries.rda.
 #' @param startyear The year you wish to begin your predictions from. Default is 1990.
 #' @param endyear The year you wish to finish your predictions. Default is 2030.5.
 #' @param nsegments The number of knots you wish to use in your basis functions. Default is 12.
-#' @param raw_data The national family planning source data from the 'get_subnational_data' function.
+#' @param raw_data The national family planning source data from the 'get_national_data' function.
+#' @param varcov_array_filepath Path to calculated variance-covariance array associated with the custom supplied FP source data. Default is NULL. Covariance data should be a .RDS file.
 #' @return A list of modelling inputs for the JAGS model.
 #' 1. Tstar is the year index for the most recent survey in each province.
 #' 2. Kstar is the knot index that aligns with Tstar.
@@ -498,7 +508,7 @@ get_national_local_parameters <- function(mycountry=NULL, fp2030=TRUE) {
 #' 11. matchyears is the year indexing to match the observed data to the predictions.
 #' @noRd
 
-get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990, endyear=2030.5, nsegments=12, raw_data) {
+get_national_modelinputs <- function(local=FALSE, mycountry=NULL,  startyear=1990, endyear=2030.5, nsegments=12, raw_data, varcov_array_filepath){
 
   clean_FPsource <- standard_method_names(raw_data) # Standardizing method names
   n_method <- c("Female Sterilization", "Implants", "Injectables", "IUD", "OC Pills" ) # As per the method correlation matrix
@@ -565,9 +575,15 @@ get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990
            logit.CM = log(Commercial_medical/(1-Commercial_medical))
     )
 
-  # Get bivariate covariance matrices
-  logit.varcov_array <- mcmsupply::national_FPsource_VARCOV_bivarlogitnormal
+  if(is.null(varcov_array_filepath)==FALSE) {
+    custom <- TRUE
+    logit.varcov_array <- readRDS(varcov_array_filepath) # read in custom variance-covariance array data
+  } else {
+    custom <- FALSE
+    # Get bivariate covariance matrices
+    logit.varcov_array <- mcmsupply::national_FPsource_VARCOV_bivarlogitnormal
 
+  }
   return(list(data = clean_FPsource,
               Sigma_y = logit.varcov_array,
               tstar = T_star$index_year,
@@ -587,7 +603,8 @@ get_national_modelinputs <- function(local=FALSE, mycountry=NULL, startyear=1990
               matchsuperregion = match_superregion,
               matchcountry = match_country,
               matchmethod = match_method,
-              matchyears = match_years)
+              matchyears = match_years,
+              custom=custom)
   )
 }
 
@@ -1922,7 +1939,6 @@ run_subnational_jags_model <- function(jagsdata, jagsparams = NULL, local=FALSE,
                           n.thin = n_thin)
     }
     mod$BUGSoutput[names(mod$BUGSoutput) %in% c("sims.list", # REMOVING SOME DATA FROM FIT OBJECT TO REDUCE FILE SIZE
-                                                "summary",
                                                 "mean",
                                                 "sd")] <- NA
     f <- file.path(tempdir(), paste0(chain, "chain.rds"))

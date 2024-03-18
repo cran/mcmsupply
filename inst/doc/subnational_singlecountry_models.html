@@ -396,8 +396,8 @@ monitored.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>sample_draws <span class="ot">&lt;-</span> tidybayes<span class="sc">::</span><span class="fu">tidy_draws</span>(mod<span class="sc">$</span>JAGS<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.matrix)</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>var <span class="ot">&lt;-</span> sample_draws <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(.chain, .iteration, .draw,<span class="st">`</span><span class="at">P[1,2,1,1]</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">chain =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">each=</span><span class="dv">2000</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">iteration =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2000</span>, <span class="dv">2</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">chain =</span> <span class="dv">1</span>, <span class="co"># rep(1:mod$JAGS$BUGSoutput$n.chains, each=mod$JAGS$BUGSoutput$n.sims)),</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>                <span class="at">iteration =</span> <span class="dv">3</span>) <span class="co"># rep(1:mod$JAGS$BUGSoutput$n.sims, mod$JAGS$BUGSoutput$n.chains))</span></span>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a></span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(<span class="at">data=</span>var) <span class="sc">+</span></span>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">geom_line</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x=</span>iteration, <span class="at">y=</span><span class="st">`</span><span class="at">P[1,2,1,1]</span><span class="st">`</span>, <span class="at">color=</span><span class="fu">as.factor</span>(chain)))</span></code></pre></div>
@@ -405,13 +405,12 @@ monitored.</p>
 plots to assess the convergence of individual parameters. We expect to
 see a ‘caterpillar’ like appearance of the chains over the
 iterations.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">plot</span>(mod<span class="sc">$</span>JAGS)</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">print</span>(mod<span class="sc">$</span>JAGS)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">head</span>(mod<span class="sc">$</span>JAGS<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary)</span></code></pre></div>
 </div>
 <div id="plot-posterior-point-estimates-with-uncertainty" class="section level2">
 <h2>Plot posterior point estimates with uncertainty</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">plot_estimates</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">model_output =</span> mod)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">plot_estimates</span>(<span class="at">jagsdata =</span> pkg_data, <span class="at">model_output =</span> mod)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>plots[[<span class="dv">1</span>]]</span></code></pre></div>
 </div>
 <div id="pull-out-estimates-that-you-are-particularly-interested-in" class="section level2">
 <h2>Pull out estimates that you are particularly interested in</h2>

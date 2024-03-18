@@ -5,7 +5,13 @@
 \alias{get_modelinputs}
 \title{Get JAGS model inputs}
 \usage{
-get_modelinputs(startyear = 1990, endyear = 2030.5, nsegments = 12, raw_data)
+get_modelinputs(
+  startyear = 1990,
+  endyear = 2030.5,
+  nsegments = 12,
+  raw_data,
+  varcov_array_filepath = NULL
+)
 }
 \arguments{
 \item{startyear}{The year you wish to begin your predictions from. Default is 1990.}
@@ -15,6 +21,8 @@ get_modelinputs(startyear = 1990, endyear = 2030.5, nsegments = 12, raw_data)
 \item{nsegments}{The number of knots you wish to use in your basis functions. Default is 12.}
 
 \item{raw_data}{The list of arguments and family planning source data from the 'get_data' function.}
+
+\item{varcov_array_filepath}{Path to calculated variance-covariance array associated with the custom supplied FP source data. Default is NULL. Covariance data should be a .RDS file.}
 }
 \value{
 A list of modelling inputs for the JAGS model.

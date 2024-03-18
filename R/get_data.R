@@ -11,8 +11,7 @@
 #' @param fp2030 Default is TRUE. Filter raw data to only include the Family
 #' Planning 2030 focus countries discussed in the Comiskey et al. paper.
 #' @param surveydata_filepath Path to survey data. Default is NULL. Survey data
-#' should be a .xlsx with the following format
-#' \code{\link{national_FPsource_data}}.
+#' should be a .xlsx with the following format \code{\link{national_FPsource_data}}.
 #' @return returns a list containing the DHS data set used for inputs into the
 #' model and the arguments that specify the data set up.
 #' @import R2jags runjags tidyverse tidybayes stats foreach rlang
